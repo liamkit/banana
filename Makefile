@@ -9,7 +9,7 @@ include $(TLD_ROOT_DIR)/lib/variables.mk
 
 # host-toolchain
 
-PACKAGES	= basefs host-opkg host-opkg-utils linux u-boot banana
+PACKAGES	= host-toolchain basefs host-opkg host-opkg-utils linux u-boot banana
 
 world::	$(PACKAGES)
 
