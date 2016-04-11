@@ -1,0 +1,88 @@
+These are notes I put together developing firmware for banana pro.
+
+
+*** this project references a bunch of other projects. For convenient, git submodule is used.
+
+   a) setup a submodule, you have to commit your project after.
+      git submodule add git-url
+
+   b) when checkout a fresh copy, you need to initialize the submodule. git only stores the 
+      git hash for the last check in. you most likely want to branch if you need to do something with the
+      submodule.
+
+      git submodule init
+      git submodule update
+
+   c) a convenient command for submodule is to apply git command to all the modules
+
+      git submodule foreach git co master
+
+
+*** github and git mirror is used. to set up git mirror, do
+
+
+    a) clone with mirror to get all the meta data. this include all the branches and tags.
+
+       git clone --mirror git-url local-git
+
+    b) add remote to local
+
+       git remote add github github.com:repository
+
+    c) push the mirror to github
+
+       git push github --mirror
+
+
+
+
+
+
+
+
+Directory Hierarhcy
+===================
+Here are the important directories:
+
+     /banana/tools/sunxi       - a place to store all the tools. sunxi is the processor for banana pro.
+     /banana/sysroot	       - root file system
+
+     working/package	       - package description
+     working/module	       - locally developed modules.
+     working/Gen	       - all generated files
+     working/Gen/build	       - build directory
+
+
+
+Building
+========
+Firmware for the banana pro is a collection of open source project. We can generalize the building
+of these packages into the following steps:
+
+    a) download
+       download the project. the common way to download project is via url or from some version
+       controlled repository.
+
+    b) source
+       once downloaded, the source target unpacks into the build directory
+
+    c) patch
+       apply patches to source
+
+    d) configure
+       configure the source to be built
+
+    e) compile
+       compile the source
+
+    f) install
+       install the compiled program to the target root file system
+
+
+
+
+
+
+
+
+
