@@ -1,0 +1,15 @@
+[submodule "module/buildroot"]
+	path = module/buildroot
+	url = git://git.buildroot.net/buildroot
+[submodule "module/opkg-utils"]
+	path = module/opkg-utils
+	url = git://git.yoctoproject.org/opkg-utils
+[submodule "module/opkg"]
+	path = module/opkg
+	url = git://git.yoctoproject.org/opkg
+[submodule "module/linux"]
+	path = module/linux
+	url = git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git
+[submodule "module/u-boot"]
+	path = module/u-boot
+	url = git://git.denx.de/u-boot.git
