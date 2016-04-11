@@ -1,0 +1,9 @@
+Package:	rsync
+Version:	3.1.12
+Architecture:	arm
+Maintainer:	sfmhui@gmail.com
+Section:	network
+Source:		rsync.tar.gz
+Priority:	optional
+Description:	rsync 
+

@@ -1,0 +1,154 @@
+#!/bin/bash
+#
+#
+# create a disk img for banana pro to be copied a mmc card.
+#
+PROGRAM=`basename $0 sh`
+PROGRAMDIR=`dirname $0` 
+
+BINDIR=`realpath $PROGRAMDIR`
+ROOTDIR=`echo $BINDIR | sed -e 's@/bin@@'`
+ETCDIR=`echo $BINDIR | sed -e 's@/bin@/etc@'`
+LIBDIR=`echo $BINDIR | sed -e "s@/bin@/lib/${PROGRAM}@"`
+SYSROOT=
+TMPDIR="/tmp/${PROGRAM}$$"
+USAGE="[ -d ] sysroot sdcard.out"
+
+DEBUG=0
+FORCE=0
+
+
+cleanup()
+{
+    trap - 0 1 2 3 15
+    rm -rf "${TMPDIR}"
+}
+trap cleanup 0 1 2 3 15
+mkdir -p ${TMPDIR}
+
+
+# script variables
+
+usage()
+{
+    echo "usage: $PROGRAM $USAGE" 1>&2
+    exit 2
+}
+
+debug()
+{
+    if [ $DEBUG -gt 0 ]; then
+        echo "$PROGRAM debug: $@" 1>&2
+    fi
+}
+
+print()
+{
+    echo "$PROGRAM info: $@" 1>&2
+}
+
+alert()
+{
+    echo "$PROGRAM alert: $@" 1>&2
+}
+
+error()
+{
+    echo "$PROGRAM error: $@" 1>&2
+}
+
+runcmd()
+{
+    if [ $DEBUG -eq 0 ]; then
+	$@ > /dev/null 2>&1
+    else
+	$@
+    fi
+    status="$?"
+    return $status
+}
+
+fatal()
+{
+    error $@
+    exit 1
+}
+
+while [ $# -gt 0 ]; do
+    option="$1"
+    case $option in
+	-r) SYSROOT=$2
+	    shift 2
+	    ;;
+	-d) DEBUG=$((DEBUG+1))
+	    shift 1
+	    ;;
+	-*) usage
+	    ;;
+	*) break
+	    ;;
+    esac
+done
+
+if [ $# -ne 2 ]; then
+    usage
+fi
+
+SYSROOT="$1"
+SDCARD="$2"
+
+if [ ! -d "$SYSROOT" -o ! -f "${SYSROOT}/boot/vmlinuz" -o ! -f "${SYSROOT}/boot/u-boot.bin" ]; then
+    error "invalid sysroot at \"${SYSROOT}\""
+fi
+
+#
+# more setup
+#
+if [ "$DEBUG" -gt 2 ]; then
+    set -xv
+fi
+
+
+#
+# figure out size of the ext2 - we use du to get size of the disk and give it 50% more
+#
+EXT2_SIZE=`du -s "${SYSROOT}" | awk '{ print $1}'`
+EXT2_SIZE=$((EXT2_SIZE * 15 / 10000))
+
+debug "sysroot @ \"${SYSROOT}\" has size ${EXT2_SIZE}m"
+
+ROOTFS_IMG="${TMPDIR}/rootfs"
+if ! runcmd genext2fs -U -P -d "${SYSROOT}" -D etc/device_table.txt -b $((EXT2_SIZE * 1024)) ${ROOTFS_IMG}; then
+    fatal "not able to generate ext2 image"
+fi
+if ! runcmd tune2fs -O dir_index,has_journal,uninit_bg,extents ${ROOTFS_IMG}; then
+    fatal "not able to convert ext2 to ext4"
+fi
+
+
+#
+# create SDCARD - size of sdcard is 1m + ext2 image size
+#
+SIZE=$((EXT2_SIZE+1))
+truncate -s ${SIZE}m ${SDCARD}
+
+partition()
+{
+    sfdisk ${SDCARD} <<EOF
+1MiB,,
+EOF
+}
+
+if ! runcmd partition; then
+    fatal "not able to partition disk"
+fi
+
+UBOOT="${SYSROOT}/boot/u-boot.bin"
+if ! runcmd dd if=${UBOOT} of=${SDCARD} conv=notrunc bs=1024 seek=8; then
+    fatal "not able to write u-boot to sdcard"
+fi
+if ! runcmd dd if=${ROOTFS_IMG} of=${SDCARD} conv=notrunc bs=1024 seek=1024; then
+    fatal "not able to write ext2 fs to sdcard"
+fi
+
+exit 0

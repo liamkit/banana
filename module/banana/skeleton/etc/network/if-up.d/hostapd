@@ -1,0 +1,7 @@
+#!/bin/sh
+#
+# if wlan0, start hostapd
+
+[ "$IFACE" = "wlan0" ] || exit 0
+
+start-stop-daemon -b -S -q -m -p /var/run/hostapd.pid --exec /usr/sbin/hostapd -- /etc/hostapd/hostapd.conf
