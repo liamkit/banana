@@ -121,7 +121,7 @@ ROOTFS_IMG="${TMPDIR}/rootfs"
 if ! runcmd genext2fs -U -P -d "${SYSROOT}" -D etc/device_table.txt -b $((EXT2_SIZE * 1024)) ${ROOTFS_IMG}; then
     fatal "not able to generate ext2 image"
 fi
-if ! runcmd tune2fs -O dir_index,has_journal,uninit_bg,extents ${ROOTFS_IMG}; then
+if ! runcmd /sbin/tune2fs -O dir_index,has_journal,uninit_bg,extents ${ROOTFS_IMG}; then
     fatal "not able to convert ext2 to ext4"
 fi
 
