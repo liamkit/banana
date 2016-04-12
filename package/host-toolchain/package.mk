@@ -16,3 +16,6 @@ $(PKG_TIMESTAMP.post-cfg):
 		-e "/^BR2_DL_DIR/s@=.*@=\"$(TLD_CACHE_DIR)\"@"		\
 	 $(PKG_SOURCE_DIR)/.config
 
+
+clobber::
+	@$(call CMD_RM_DIR,$(TLD_TOOLCHAIN_DIR))
