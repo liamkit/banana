@@ -13,3 +13,6 @@
 [submodule "module/opkg-utils"]
 	path = module/opkg-utils
 	url = https://github.com/liamkit/opkg-utils
+[submodule "module/rtl8812au"]
+	path = module/rtl8812au
+	url = https://github.com/gnab/rtl8812au
