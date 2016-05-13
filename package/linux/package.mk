@@ -5,7 +5,7 @@ GIT_MODULE	= linux
 VERSION		= v4.4.6
 
 KCONFIG		= sunxi
-KCONFIG_COMPILE_FLAGS	= LOADADDR=40008000uImage sun7i-a20-bananapro.dtb modules
+KCONFIG_COMPILE_FLAGS	= LOADADDR=40008000 uImage sun7i-a20-bananapro.dtb modules
 KCONFIG_INSTALL_FLAGS	= INSTALL_MOD_PATH=$(PKG_INSTALL_DIR) modules_install
 
 
