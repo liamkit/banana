@@ -1,12 +1,14 @@
 diff --git a/include/configs/sun7i.h b/include/configs/sun7i.h
-index 56101a9..b5b6f40 100644
+index 56101a9..d49dcfa 100644
 --- a/include/configs/sun7i.h
 +++ b/include/configs/sun7i.h
-@@ -24,6 +24,12 @@
+@@ -24,6 +24,14 @@
  #define CONFIG_ARMV7_SECURE_BASE	SUNXI_SRAM_B_BASE
  #define CONFIG_TIMER_CLK_FREQ		24000000
  
-+#define	CONFIG_BOOTCOMMAND	"ext2load mmc 0:1 48000000 /boot/vmlinuz; bootz 48000000"
++#define	CONFIG_BOOTCOMMAND	"ext2load mmc 0:1 48000000 /boot/vmlinuz; " \
++				"ext2load mmc 0:1 48000000 /boot/sunxi-a20-bananapro.dtb; " \
++				"bootm 48000000 - 49000000"
 +#define	CONFIG_IPADDR		192.168.0.104
 +#define	CONFIG_NETMASK		255.255.252.0
 +#define	CONFIG_SERVERIP		192.168.0.99
@@ -15,7 +17,7 @@ index 56101a9..b5b6f40 100644
  /*
   * Include common sunxi configuration where most the settings are
   */
-@@ -31,4 +37,11 @@
+@@ -31,4 +39,10 @@
  
  #define CONFIG_MACH_TYPE	(4283 | ((CONFIG_MACH_TYPE_COMPAT_REV) << 28))
  
@@ -23,7 +25,6 @@ index 56101a9..b5b6f40 100644
 +#define	BOOTENV
 +
 +#undef CONFIG_EXTRA_ENV_SETTINGS
-+#define CONFIG_EXTRA_ENV_SETTINGS
-+
++#define CONFIG_EXTRA_ENV_SETTINGS	"bootm_size=0xa000000\0"
 +
  #endif /* __CONFIG_H */
